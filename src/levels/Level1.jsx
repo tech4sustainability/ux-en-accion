@@ -66,6 +66,7 @@ export default function Level1({ selections, onElementClick }) {
   const buttonsChoice = selections.buttons ?? 0;
   const backgroundChoice = selections.background ?? 0;
   const imageChoice = selections.image ?? 0;
+  const baseUrl = import.meta.env.BASE_URL;
 
   const backgroundClass =
     backgroundChoice === 1
@@ -146,13 +147,13 @@ export default function Level1({ selections, onElementClick }) {
               >
                 {imageChoice === 1 ? (
                   <img
-                    src="/libros.jpg"
+                    src={`${baseUrl}libros.jpg`}
                     alt="Libros y material educativo"
                     className="level__image-img"
                   />
                 ) : imageChoice === 2 ? null : (
                   <img
-                    src="/perro.jpg"
+                    src={`${baseUrl}perro.jpg`}
                     alt="Un perro sin relación con el contenido"
                     className="level__image-img"
                   />

@@ -49,6 +49,7 @@ export default function Level3({ selections, onElementClick }) {
   const spacingChoice = selections.spacing ?? 0;
   const videoChoice = selections.video;
   const textSizeChoice = selections.textSize ?? 0;
+  const baseUrl = import.meta.env.BASE_URL;
 
   const isSingleChapter = layoutChoice === 1;
   const isGoodContrast = contrastChoice === 1;
@@ -230,8 +231,8 @@ export default function Level3({ selections, onElementClick }) {
                   <img
                     src={
                       activeChapter.id === 1
-                        ? "/sistema-solar.jpg"
-                        : "/luna.jpg"
+                        ? `${baseUrl}sistema-solar.jpg`
+                        : `${baseUrl}luna.jpg`
                     }
                     alt={
                       activeChapter.id === 1
@@ -254,8 +255,8 @@ export default function Level3({ selections, onElementClick }) {
                     <img
                       src={
                         chapter.id === 1
-                          ? "/sistema-solar.jpg"
-                          : "/luna.jpg"
+                          ? `${baseUrl}sistema-solar.jpg`
+                          : `${baseUrl}luna.jpg`
                       }
                       alt={
                         chapter.id === 1
