@@ -278,7 +278,27 @@ body {
   padding: 16px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(180px, 1fr);
+  align-items: start;
   gap: 10px;
+}
+
+.level2__course-main {
+  display: grid;
+  gap: 10px;
+}
+
+.level2__course-media {
+  height: 170px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.level2__course-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .level2__list--tight .level2__course-card {
@@ -1080,10 +1100,93 @@ body {
   z-index: 1;
 }
 
+.game-message--summary {
+  width: min(960px, 94vw);
+  max-height: 60vh;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.game-message--summary-intro {
+  grid-template-rows: auto auto;
+}
+
 .game-message__title {
   margin: 0;
   font-size: 20px;
   color: #1f3a5f;
+}
+
+.game-message__subtitle {
+  margin: 0;
+  color: #2a3d55;
+  font-weight: 600;
+}
+
+.game-message__subtitle--intro {
+  font-weight: 400;
+}
+
+.game-message__content {
+  display: grid;
+  gap: 12px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 6px;
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
+  scrollbar-color: #4c6f97 #d7e3f2;
+}
+
+.game-message__content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.game-message__content::-webkit-scrollbar-track {
+  background: #d7e3f2;
+  border-radius: 999px;
+}
+
+.game-message__content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #5f83ad 0%, #3f638d 100%);
+  border-radius: 999px;
+  border: 2px solid #d7e3f2;
+}
+
+.game-message__content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4f749f 0%, #33577f 100%);
+}
+
+.summary-level {
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(31, 58, 95, 0.12);
+}
+
+.summary-level__title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #1f3a5f;
+}
+
+.summary-level__list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.summary-level__item {
+  color: #1f2d3d;
+}
+
+.summary-level__justification {
+  margin-top: 4px;
+  color: #334a66;
 }
 
 .game-message__button {
@@ -1094,6 +1197,18 @@ body {
   border-radius: 999px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.game-message__button--summary {
+  justify-self: end;
+  width: auto;
+  margin-bottom: 0;
+}
+
+.game-message__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0;
 }
 
 .game-message__button:disabled {
@@ -1141,5 +1256,17 @@ body {
   .game-message {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .game-message--summary {
+    width: min(94vw, 94vw);
+  }
+
+  .level2__course-card {
+    grid-template-columns: 1fr;
+  }
+
+  .level2__course-media {
+    height: 140px;
   }
 }

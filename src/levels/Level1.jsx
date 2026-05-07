@@ -108,7 +108,6 @@ export default function Level1({ selections, onElementClick }) {
               Aula Educa
             </div>
             <nav className="level__nav" aria-label="Navegación principal">
-              <span className="level__nav-link">Inicio</span>
               <span className="level__nav-link">Cursos</span>
               <span className="level__nav-link">Recursos</span>
               <span className="level__nav-link">Comunidad</span>

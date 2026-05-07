@@ -3,6 +3,7 @@ const COURSES = [
     id: 1,
     title: "Curso 1",
     subtitle: "Planetas y sistema solar",
+    image: "luna.jpg",
     description:
       "Aprender sobre los planetas puede ser muy divertido. Hay muchos datos interesantes sobre los que componen el sistema solar, sus características y curiosidades que quizá no conocías. Además, puedes descubrir cómo se mueven y cuáles de ellos tienen satélites.",
     buttonLabel: "Ver curso de planetas",
@@ -11,6 +12,7 @@ const COURSES = [
     id: 2,
     title: "Curso 2",
     subtitle: "Historia del arte",
+    image: "arte.jpg",
     description:
       "La historia del arte es fascinante y está llena de sorpresas. Desde las pinturas rupestres hasta los museos modernos, hay mucho que explorar. Cada época tiene estilos distintos y artistas que cambiaron la forma de ver el mundo.",
     buttonLabel: "Ver curso de arte",
@@ -19,6 +21,7 @@ const COURSES = [
     id: 3,
     title: "Curso 3",
     subtitle: "Experimentos en casa",
+    image: "experimentos.jpg",
     description:
       "Los experimentos de ciencia en casa son geniales para aprender jugando. Puedes probar mezclas de colores, pequeñas reacciones químicas y observar fenómenos físicos sencillos que explican cómo funciona el mundo.",
     buttonLabel: "Ver curso de ciencia",
@@ -61,6 +64,7 @@ function KeyAccessible({
 }
 
 export default function Level2({ selections, onElementClick }) {
+  const baseUrl = import.meta.env.BASE_URL;
   const structureChoice = selections.structure ?? 0;
   const textChoice = selections.text ?? 0;
   const spacingChoice = selections.spacing ?? 0;
@@ -106,7 +110,6 @@ export default function Level2({ selections, onElementClick }) {
               Aula Educa
             </div>
             <nav className="level__nav" aria-label="Navegación principal">
-              <span className="level__nav-link">Inicio</span>
               <span className="level__nav-link">Cursos</span>
               <span className="level__nav-link">Recursos</span>
               <span className="level__nav-link">Comunidad</span>
@@ -125,44 +128,53 @@ export default function Level2({ selections, onElementClick }) {
           {structureChoice === 2 ? (
             COURSES.map((course) => (
               <article key={course.id} className="level2__course-card">
-                <div className="level2__course-title">{course.title}</div>
-                <div className="level2__course-subtitle">{course.subtitle}</div>
-                <KeyAccessible
-                  className={`level2__course-text ${textClass}`}
-                  ariaLabel="Editar tamaño del texto"
-                  onActivate={() => onElementClick("content")}
-                  stopPropagation
-                >
-                  {course.description}
-                </KeyAccessible>
-                {isButtonsNear && structureChoice === 2 && (
-                  <div
-                    className={`level2__course-button ${
-                      isButtonsBlink ? "level2__button--blink" : ""
-                    } ${
-                      isButtonsColorCorrect
-                        ? "level2__course-button--good"
-                        : "level2__course-button--bad"
-                    }`}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onElementClick("buttons");
-                    }}
-                    onKeyDown={(event) => {
-                      event.stopPropagation();
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        onElementClick("buttons");
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
+                <div className="level2__course-main">
+                  <div className="level2__course-title">{course.title}</div>
+                  <div className="level2__course-subtitle">{course.subtitle}</div>
+                  <KeyAccessible
+                    className={`level2__course-text ${textClass}`}
+                    ariaLabel="Editar tamaño del texto"
+                    onActivate={() => onElementClick("content")}
+                    stopPropagation
                   >
-                    {isButtonsDescriptive
-                      ? course.buttonLabel
-                      : `Ver curso ${course.id}`}
-                  </div>
-                )}
+                    {course.description}
+                  </KeyAccessible>
+                  {isButtonsNear && structureChoice === 2 && (
+                    <div
+                      className={`level2__course-button ${
+                        isButtonsBlink ? "level2__button--blink" : ""
+                      } ${
+                        isButtonsColorCorrect
+                          ? "level2__course-button--good"
+                          : "level2__course-button--bad"
+                      }`}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onElementClick("buttons");
+                      }}
+                      onKeyDown={(event) => {
+                        event.stopPropagation();
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          onElementClick("buttons");
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      {isButtonsDescriptive
+                        ? course.buttonLabel
+                        : `Ver curso ${course.id}`}
+                    </div>
+                  )}
+                </div>
+                <div className="level2__course-media" aria-hidden="true">
+                  <img
+                    src={`${baseUrl}${course.image}`}
+                    alt=""
+                    className="level2__course-image"
+                  />
+                </div>
               </article>
             ))
           ) : structureChoice === 1 ? (

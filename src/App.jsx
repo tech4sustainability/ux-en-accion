@@ -15,10 +15,44 @@ const INITIAL_STATE = {
   selections: {},
 };
 
+const JUSTIFICATION_BY_FIX_KEY = {
+  title:
+    "Claridad visual: usamos tamaños legibles y coherentes, y hacemos los títulos más grandes para facilitar la lectura.",
+  text:
+    "Claridad visual: usamos un tamaño de texto legible para reducir el esfuerzo y comprender mejor la información.",
+  buttons:
+    "Botones y acciones: añadimos texto o iconos claros en los botones para que se entienda qué ocurre al pulsarlos.",
+  background:
+    "Claridad visual: usamos fondos claros y neutros con contraste suficiente para evitar cansancio visual.",
+  image:
+    "Imágenes y gráficos: usamos imágenes relevantes que aporten valor y evitamos imágenes sin relación con el contenido.",
+  structure:
+    "Organización y estructura: usamos títulos, subtítulos y agrupación por bloques para encontrar la información más rápido.",
+  spacing:
+    "Espacios: usamos márgenes y espacios en blanco para separar secciones y evitar saturación visual.",
+  buttonsDistance:
+    "Botones y acciones: ajustamos tamaño y posición de los botones para facilitar su uso.",
+  buttonsBlink:
+    "Botones y acciones: evitamos animaciones demasiado llamativas para no distraer ni molestar.",
+  buttonsLabel:
+    "Botones y acciones: usamos textos claros y descriptivos para indicar qué acción se realizará.",
+  buttonsColor:
+    "Botones y acciones y Navegación y consistencia: mantenemos estilo y color consistentes para mejorar reconocimiento y uso.",
+  layout:
+    "Organización y estructura: dividimos el contenido en capítulos o secciones para evitar sobrecarga y mejorar la comprensión.",
+  contrast:
+    "Accesibilidad: verificamos contrastes adecuados entre texto y fondo para asegurar la legibilidad.",
+  video:
+    "Claridad visual e Imágenes y gráficos: colocamos el contenido multimedia para que no tape el texto ni distraiga de la información principal.",
+  textSize:
+    "Accesibilidad: permitimos ajustar el tamaño de la letra para adaptarnos a diferentes necesidades.",
+};
+
 export default function App() {
   const [gameState, setGameState] = useState(INITIAL_STATE);
   const [activeFixKey, setActiveFixKey] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [showIntroModal, setShowIntroModal] = useState(true);
 
   const levelConfigs = useMemo(
     () => ({
@@ -119,7 +153,7 @@ export default function App() {
             label: "Color",
             options: [
               { text: "Color llamativo", correct: false },
-              { text: "Color adecuado", correct: true },
+              { text: "Color adaptado al diseño", correct: true },
             ],
           },
         },
@@ -179,6 +213,24 @@ export default function App() {
   const levelCompleted = completedFixes === totalFixes;
   const maxLevel = Math.max(...Object.keys(levelConfigs).map(Number));
   const isLastLevel = gameState.level === maxLevel;
+  const finalSummary = Object.entries(levelConfigs).map(([level, config]) => {
+    const fixes = Object.entries(config.fixes).map(([fixKey, fixConfig]) => {
+      const correctOption = fixConfig.options.find((option) => option.correct);
+      return {
+        key: fixKey,
+        label: fixConfig.label,
+        appliedChange: correctOption?.text ?? "Sin opción correcta definida",
+        justification:
+          JUSTIFICATION_BY_FIX_KEY[fixKey] ??
+          "Justificación pendiente de vincular con la guía.",
+      };
+    });
+
+    return {
+      level,
+      fixes,
+    };
+  });
 
   const openFixPanel = (fixKey) => {
     setActiveFixKey(fixKey);
@@ -314,6 +366,10 @@ export default function App() {
 
   useEffect(() => {
     const handleKey = (event) => {
+      if (showIntroModal && event.key === "Escape") {
+        setShowIntroModal(false);
+        return;
+      }
       const tag = event.target?.tagName?.toLowerCase();
       if (tag === "input" || tag === "textarea") return;
 
@@ -337,10 +393,46 @@ export default function App() {
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [gameState.level, levelConfigs]);
+  }, [gameState.level, levelConfigs, showIntroModal]);
 
   return (
     <div className="app">
+      {showIntroModal && (
+        <div className="game-message-overlay" role="dialog" aria-modal="true">
+          <div
+            className="game-message__backdrop"
+            onClick={() => setShowIntroModal(false)}
+          />
+          <div
+            className="game-message game-message--summary game-message--summary-intro"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 className="game-message__title">
+              Misión: mejorar la web de cursos de la biblioteca
+            </h3>
+            <div className="game-message__content">
+              <section className="summary-level">
+                <p className="game-message__subtitle game-message__subtitle--intro">
+                  Mejora esta interfaz detectando y corrigiendo decisiones de
+                  diseño. Haz clic en los elementos interactivos, elige la
+                  mejor opción en cada panel y completa todas las correcciones
+                  del nivel para avanzar.
+                </p>
+              </section>
+            </div>
+            <div className="game-message__actions">
+              <button
+                type="button"
+                className="game-message__button game-message__button--summary"
+                onClick={() => setShowIntroModal(false)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="hud">
         <div className="hud__level">Nivel {gameState.level}</div>
         <ProgressBar
@@ -357,9 +449,14 @@ export default function App() {
 
       <GameMessage
         show={levelCompleted}
+        title={
+          isLastLevel
+            ? "¡Enhorabuena! Has completado el juego."
+            : undefined
+        }
         message={
           isLastLevel
-            ? "Felicidades! Has completado el juego."
+            ? "¿Qué has corregido?"
             : "¡Has mejorado la página!"
         }
         actionLabel={
@@ -376,7 +473,26 @@ export default function App() {
             ? handleNextLevel
             : undefined
         }
-      />
+      >
+        {isLastLevel &&
+          finalSummary.map((levelData) => (
+            <section key={levelData.level} className="summary-level">
+              <h4 className="summary-level__title">Nivel {levelData.level}</h4>
+              <ul className="summary-level__list">
+                {levelData.fixes.map((fix) => (
+                  <li key={fix.key} className="summary-level__item">
+                    <div>
+                      <strong>{fix.label}:</strong> {fix.appliedChange}
+                    </div>
+                    <div className="summary-level__justification">
+                      {fix.justification}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+      </GameMessage>
 
       <MultiConfigPanel
         isOpen={isLevel2ContentPanel}
